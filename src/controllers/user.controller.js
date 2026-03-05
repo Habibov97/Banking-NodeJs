@@ -5,14 +5,15 @@ const list = async (req, res) => {
   res.status(200).json(users);
 };
 
-const create = async (req, res) => {
-  const result = await userService.create(req.body);
+const update = async (req, res) => {
+  const result = await userService.update(req.user, req.body);
+
   res.json(result);
 };
 
 const userController = {
   list,
-  create,
+  update,
 };
 
 module.exports = userController;

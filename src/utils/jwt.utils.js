@@ -6,7 +6,14 @@ const encodePayload = (payload) => {
   return token;
 };
 
-const decodePayload = (token) => {};
+const decodePayload = (token) => {
+  try {
+    const decoded = jwt.verify(token, config.jwtSecret);
+    return decoded;
+  } catch (error) {
+    return null;
+  }
+};
 
 module.exports = {
   encodePayload,

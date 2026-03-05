@@ -8,4 +8,5 @@ module.exports = {
   port: process.env.PORT,
   databaseURL: process.env.DATABASE_URL,
   jwtSecret: process.env.JWT_SECRET,
+  nodeENV: process.env.NODE_ENV,
 };

@@ -1,6 +1,6 @@
 const { z } = require('zod');
 
-const create = z.object({
+const register = z.object({
   fullName: z.string().optional(),
   phone: z.string().optional(),
   email: z.email(),
@@ -13,7 +13,7 @@ const login = z.object({
 });
 
 const userValidation = {
-  create,
+  register,
   login,
 };
 
