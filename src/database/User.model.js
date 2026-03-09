@@ -34,6 +34,6 @@ User.beforeCreate(async (user) => {
   user.password = await bcrypt.hash(user.password, 10);
 });
 
-sequelize.sync({ force: true });
+sequelize.sync({ force: false });
 
 module.exports = User;
