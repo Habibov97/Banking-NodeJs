@@ -1,0 +1,28 @@
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <div>
+        <h1> Hi {{user.fullName}}, Welcome to Our Community</h1>
+        <p>We're excited to have you with us. Let's get started</p>
+      </div>
+      <div>
+        <p>Hello <strong>{{user.fullName}}</strong></p>
+        <p> Thank you for sigining up! </p>
+
+        <a href='{{activationLink}}'> Activate your account </a>
+      </div>
+      <div>
+        <p>If you have any questions, feel free to contant us
+          <a href='mailto:{{supportMail}}'></a>
+        </p>
+        <p>Thanks again for joining us</p>
+      </div>
+
+    </div>
+  </body>
+</html>

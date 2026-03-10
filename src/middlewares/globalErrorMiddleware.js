@@ -51,16 +51,16 @@ const sendErrProd = (err, res) => {
 const globalErrorMiddleware = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
+
   if (config.nodeENV === 'development') {
     sendErrDev(err, res);
   } else if (config.nodeENV === 'production') {
-    let error = { ...err };
-    if (error.name === 'SequelizeUniqueConstraintError') error = handleUniqueConstraintError(error);
-    if (error.name === 'SequelizeValidationError') error = handleValidationError(error);
-    if (error.name === 'SequelizeDatabaseError') error = handleDatabaseError(error);
-    if (error.name === 'SequelizeForeignKeyConstraintError') error = handleForeignKeyConstraintError(error);
+    if (err.name === 'SequelizeUniqueConstraintError') err = handleUniqueConstraintError(err);
+    if (err.name === 'SequelizeValidationError') err = handleValidationError(err);
+    if (err.name === 'SequelizeDatabaseError') err = handleDatabaseError(err);
+    if (err.name === 'SequelizeForeignKeyConstraintError') err = handleForeignKeyConstraintError(err);
 
-    sendErrProd(error, res);
+    sendErrProd(err, res);
   }
 };
 
