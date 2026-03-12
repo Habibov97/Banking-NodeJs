@@ -7,14 +7,15 @@ const create = z.object({
   password: z.string().min(6).max(100),
 });
 
-const login = z.object({
-  email: z.email(),
-  password: z.string().min(6).max(100),
+const resetPassword = z.object({
+  currentPassword: z.string().min(6).max(100),
+  newPassword: z.string().min(6).max(100),
+  repeatPassword: z.string().min(6).max(100),
 });
 
 const userValidation = {
   create,
-  login,
+  resetPassword,
 };
 
 module.exports = userValidation;

@@ -11,9 +11,16 @@ const update = async (req, res) => {
   res.json(result);
 };
 
+const resetPassword = async (req, res) => {
+  const result = await userService.resetPassword(req.user.id, req.body);
+
+  res.json(result);
+};
+
 const userController = {
   list,
   update,
+  resetPassword,
 };
 
 module.exports = userController;

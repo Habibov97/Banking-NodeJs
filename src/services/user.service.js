@@ -1,4 +1,6 @@
 const User = require('../database/User.model');
+const bcrypt = require('bcrypt');
+const AppError = require('../utils/appError');
 
 const list = async () => {
   let list = await User.findAll();
@@ -23,9 +25,29 @@ const update = async (data, params) => {
   return user;
 };
 
+const resetPassword = async (userId, params) => {
+  const { currentPassword, newPassword, repeatPassword } = params;
+
+  const user = await User.findOne({ where: { id: userId } });
+  if (!user) throw new AppError('User not found', 404);
+
+  const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+  if (!passwordMatch) throw new AppError('User password is not correct', 400);
+
+  if (newPassword !== repeatPassword) throw new AppError('Passwords do not match', 400);
+
+  user.password = await bcrypt.hash(newPassword, 10);
+  await user.save();
+
+  return {
+    message: 'Password changed successfully',
+  };
+};
+
 const userService = {
   list,
   update,
+  resetPassword,
 };
 
 module.exports = userService;

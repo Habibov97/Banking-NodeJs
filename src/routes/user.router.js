@@ -64,4 +64,8 @@ userRouter
   .get(userController.list)
   .post(authMiddleware, validationMiddleweare(userValidation.create), userController.update);
 
+userRouter
+  .route('/password')
+  .post(authMiddleware, validationMiddleweare(userValidation.resetPassword), userController.resetPassword);
+
 module.exports = userRouter;
