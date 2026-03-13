@@ -1,6 +1,6 @@
 const config = require('./config');
 const express = require('express');
-require('./database/index');
+require('./config/database');
 const router = require('./routes/index');
 const cors = require('cors');
 const path = require('path');

@@ -1,5 +1,5 @@
-const Activation = require('../database/Activation.model');
-const User = require('../database/User.model');
+const Activation = require('../models/Activation.model');
+const User = require('../models/User.model');
 const uuid = require('uuid');
 const { sendMail } = require('../utils/mail.utils');
 const AppError = require('../utils/appError');

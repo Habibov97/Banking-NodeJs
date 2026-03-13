@@ -1,4 +1,4 @@
-const User = require('../database/User.model');
+const User = require('../models/User.model');
 const AppError = require('../utils/appError');
 const { decodePayload } = require('../utils/jwt.utils');
 

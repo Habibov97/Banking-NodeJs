@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequlize = require('./index');
+const sequlize = require('../config/database');
 
 const Activation = sequlize.define(
   'Activation',
