@@ -17,7 +17,6 @@ app.use(express.json());
 app.use('/api', router);
 
 //template engine
-
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
 
