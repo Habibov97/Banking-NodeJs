@@ -1,5 +1,4 @@
-const Activation = require('../models/Activation.model');
-const User = require('../models/User.model');
+const { User, Activation } = require('../models');
 const uuid = require('uuid');
 const { sendMail } = require('../utils/mail.utils');
 const AppError = require('../utils/appError');

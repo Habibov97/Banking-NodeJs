@@ -1,16 +1,14 @@
-const { Sequelize } = require('sequelize');
+const User = require('./User.model');
+const Activation = require('./Activation.model');
+const TransactionModel = require('./Transaction.model');
 
-const config = require('../config');
+//User relations
+User.hasMany(TransactionModel, { foreignKey: 'userId', as: 'transactions' });
+TransactionModel.belongsTo(User, { as: 'from', foreignKey: 'fromId', targetKey: 'id' });
+TransactionModel.belongsTo(User, { as: 'to', foreignKey: 'toId', targetKey: 'id' });
 
-const sequelize = new Sequelize(config.databaseURL, { logging: false });
-
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log('Database connection is successfull');
-  })
-  .catch((err) => {
-    console.log('Database connection is failed', err);
-  });
-
-module.exports = sequelize;
+module.exports = {
+  User,
+  Activation,
+  TransactionModel,
+};
