@@ -10,9 +10,21 @@ const createTransaction = async (req, res) => {
   res.json(result);
 };
 
+const confirmTransaction = async (req, res, next) => {
+  try {
+    const { token } = req.body;
+    if (!token) return res.status(400).json({ message: 'Missing token' });
+    const transaction = await transactionService.confirmTransaction(token);
+    res.json({ success: true, transaction });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const transactionController = {
   userTransactions,
   createTransaction,
+  confirmTransaction,
 };
 
 module.exports = transactionController;

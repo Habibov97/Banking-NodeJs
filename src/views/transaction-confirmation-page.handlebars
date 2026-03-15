@@ -1,0 +1,122 @@
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Transaction Confirmation</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background: #f5f6fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+
+      .card {
+        background: white;
+        padding: 48px 40px;
+        border-radius: 16px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        width: 100%;
+        max-width: 420px;
+      }
+
+      .icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+      }
+
+      h2 {
+        font-size: 20px;
+        color: #1a1a2e;
+        margin-bottom: 10px;
+      }
+
+      p {
+        color: #666;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      /* Spinner */
+      .spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid #e5e7eb;
+        border-top: 4px solid #4f46e5;
+        border-radius: 50%;
+        margin: 0 auto 16px;
+        animation: spin 0.9s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* States */
+      .state {
+        display: none;
+      }
+      .state.active {
+        display: block;
+      }
+
+      #state-success h2 {
+        color: #16a34a;
+      }
+      #state-error h2 {
+        color: #dc2626;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class='card'>
+
+      <!-- Pending -->
+      <div class='state active' id='state-loading'>
+        <div class='spinner'></div>
+        <h2>Confirming your transaction...</h2>
+        <p>Please wait, this will only take a moment.</p>
+      </div>
+
+      <!-- Success -->
+      <div class='state' id='state-success'>
+        <div class='icon'>✅</div>
+        <h2>Transaction Confirmed!</h2>
+        <p>Your transaction has been completed successfully.</p>
+      </div>
+
+      <!-- Error -->
+      <div class='state' id='state-error'>
+        <div class='icon'>❌</div>
+        <h2>Confirmation Failed</h2>
+        <p id='error-message'>The token is invalid or has already been used.</p>
+      </div>
+
+    </div>
+
+    <script>
+      function showState(id) { document.querySelectorAll('.state').forEach(el => el.classList.remove('active'));
+      document.getElementById(id).classList.add('active'); } async function confirmTransaction() { const token = new
+      URLSearchParams(window.location.search).get('token'); if (!token) { showState('state-error');
+      document.getElementById('error-message').textContent = 'No token provided.'; return; } try { const res = await
+      fetch('/api/transactions/confirm', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body:
+      JSON.stringify({ token }), }); const data = await res.json(); if (res.ok && data.success) {
+      showState('state-success'); } else { showState('state-error');
+      document.getElementById('error-message').textContent = data.message || 'Something went wrong.'; } } catch (err) {
+      showState('state-error'); document.getElementById('error-message').textContent = 'Could not reach the server.'; }
+      } confirmTransaction();
+    </script>
+  </body>
+</html>

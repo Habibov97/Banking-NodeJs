@@ -1,5 +1,9 @@
 const { TransactionModel, User } = require('../models');
 const AppError = require('../utils/appError');
+const uuid = require('uuid');
+const renderTemplate = require('../utils/template.utils');
+const config = require('../config');
+const { sendMail } = require('../utils/mail.utils');
 
 const transactionsByUser = async (id) => {
   return await TransactionModel.findAll({
@@ -25,7 +29,7 @@ const createTransaction = async (userId, params) => {
   let body = {
     userId,
     type: params.type,
-    status: 'success',
+    status: 'success', // topup goes straight through
     amount: params.amount,
   };
 
@@ -35,17 +39,51 @@ const createTransaction = async (userId, params) => {
     body.toId = params.to;
   }
 
-  let transaction = await user.createTransaction(body);
-
-  if (params.type === 'transfer') {
-    await TransactionModel.create({
-      ...body,
-      userId: params.to,
-    });
+  // Topup: no confirmation needed, create immediately
+  if (params.type === 'topup') {
+    return await user.createTransaction(body);
   }
+
+  // All other types: create as pending, send confirmation email
+  body.status = 'pending';
+  const token = uuid.v4();
+  body.confirmToken = token; // store token on the transaction row
+
+  const transaction = await user.createTransaction(body);
+
+  const mailContent = await renderTemplate('transaction-confirm', {
+    confirmUrl: `${config.appURL}/api/transactions/confirm?token=${token}`,
+  });
+
+  sendMail(config.smtp.from, user.email, 'Confirm Transaction', mailContent);
+
   return transaction;
 };
 
-const transactionService = { transactionsByUser, createTransaction };
+const confirmTransaction = async (token) => {
+  const transaction = await TransactionModel.findOne({
+    where: { confirmToken: token, status: 'pending' },
+  });
+
+  if (!transaction) throw new AppError('Invalid or expired token', 400);
+
+  await transaction.update({ status: 'success', confirmToken: null });
+
+  // If it's a transfer, create the receiver-side record now
+  if (transaction.type === 'transfer') {
+    await TransactionModel.create({
+      userId: transaction.toId,
+      fromId: transaction.fromId,
+      toId: transaction.toId,
+      type: transaction.type,
+      status: 'success',
+      amount: transaction.amount,
+    });
+  }
+
+  return transaction;
+};
+
+const transactionService = { transactionsByUser, createTransaction, confirmTransaction };
 
 module.exports = transactionService;

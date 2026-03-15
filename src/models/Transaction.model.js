@@ -1,7 +1,7 @@
-const sequilize = require('../config/database');
+const sequelize = require('../config/database');
 const { DataTypes } = require('sequelize');
 
-const TransactionModel = sequilize.define(
+const TransactionModel = sequelize.define(
   'Transaction',
   {
     id: {
@@ -31,8 +31,15 @@ const TransactionModel = sequilize.define(
       type: DataTypes.INTEGER,
       allowNull: true,
     },
+    confirmToken: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+    },
   },
   { timestamps: true },
 );
+
+sequelize.sync({ alter: true });
 
 module.exports = TransactionModel;
