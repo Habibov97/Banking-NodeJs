@@ -4,6 +4,7 @@ const uuid = require('uuid');
 const renderTemplate = require('../utils/template.utils');
 const config = require('../config');
 const { sendMail } = require('../utils/mail.utils');
+const balanceService = require('./balance.service');
 
 const transactionsByUser = async (id) => {
   return await TransactionModel.findAll({
@@ -20,6 +21,7 @@ const transactionsByUser = async (id) => {
         attributes: ['id', 'fullName', 'email'],
       },
     ],
+    // order: [['id', 'DESC']],
   });
 };
 
@@ -39,8 +41,12 @@ const createTransaction = async (userId, params) => {
     body.toId = params.to;
   }
 
-  // Topup: no confirmation needed, create immediately
+  // Topup and payment: no confirmation needed, create immediately
   if (params.type === 'topup') {
+    await balanceService.topupMoney(userId, params.amount);
+    return await user.createTransaction(body);
+  } else if (params.type === 'payment') {
+    await balanceService.payment(userId, params.amount);
     return await user.createTransaction(body);
   }
 
@@ -66,6 +72,10 @@ const confirmTransaction = async (token) => {
   });
 
   if (!transaction) throw new AppError('Invalid or expired token', 400);
+
+  if (transaction.type === 'transfer') {
+    await balanceService.transferMoney(transaction.fromId, transaction.toId, transaction.amount);
+  }
 
   await transaction.update({ status: 'success', confirmToken: null });
 

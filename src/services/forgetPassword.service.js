@@ -13,11 +13,6 @@ const createForgetPasswordToken = async (email) => {
 
   if (!user) throw new AppError('user with this email is not exists', 404);
 
-  // const isAnyUnexpiredToken = await Activation.findOne({
-  //   where: { userId: user.id, type: 'activation', expireDate: { [Op.gte]: new Date() } },
-  // });
-  // if (isAnyUnexpiredToken) throw new AppError('activation token is already sent to your email', 400);
-
   const token = uuid.v4();
 
   await Activation.create({

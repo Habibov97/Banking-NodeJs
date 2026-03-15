@@ -28,6 +28,10 @@ const User = sequelize.define('User', {
     type: DataTypes.ENUM('user', 'admin'),
     defaultValue: 'user',
   },
+  balance: {
+    type: DataTypes.FLOAT,
+    defaultValue: 0,
+  },
 });
 
 User.beforeCreate(async (user) => {
